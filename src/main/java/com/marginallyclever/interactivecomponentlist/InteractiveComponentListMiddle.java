@@ -26,17 +26,16 @@ public class InteractiveComponentListMiddle extends JPanel {
         innerComponent = comp;
         setBorder(BorderFactory.createRaisedSoftBevelBorder());
 
+        handle.setName("handle");
+        handle.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+        add(handle, BorderLayout.WEST);
+
         JPanel container = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
         container.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         container.add(comp);
-
-        handle.setName("handle");
-        handle.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+        add(container, BorderLayout.CENTER);
 
         check.setName("check");
-
-        add(handle, BorderLayout.WEST);
-        add(container, BorderLayout.CENTER);
         add(check, BorderLayout.EAST);
 
         setTransferHandler(new DADInnerPanelTransferHandler());

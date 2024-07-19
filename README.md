@@ -1,5 +1,7 @@
 # com.marginallyclever.interactivecomponentlist.InteractiveComponentList
 
+![img](2024-07-19-01.gif)
+
 InteractiveComponentList is a Java Swing component that offers a vertical list of interactive 
 components, which can be sorted through drag-and-drop functionality. Unlike traditional JList 
 or JTable components, InteractiveComponentList allows for the components within the list to 
@@ -37,6 +39,10 @@ public static void main(String[] args) {
 }
 ```
 
+InteractiveComponentList does not provide a mechanism to delete items.  You must call <code>remove()</code> on the item you want to delete. 
+However, you can use <code>enableSelection(true)</code> to allow the user to select items with the mouse and then <code>getSelectedComponents()</code> to obtain the list.
+
+```java
 ## More Info
 
 See https://www.marginallyclever.com/

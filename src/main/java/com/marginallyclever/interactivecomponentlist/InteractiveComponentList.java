@@ -25,6 +25,7 @@ import java.util.List;
 public class InteractiveComponentList extends JPanel {
     private int draggedIndex = -1;
     private int lineY = -1;
+    private boolean showCheckboxes=false;
 
     public InteractiveComponentList() {
         super();
@@ -37,6 +38,17 @@ public class InteractiveComponentList extends JPanel {
                 dispatchEventToParent(e);
             }
         });
+    }
+
+    /**
+     * Enable or disable the selection checkboxes.
+     * @param showCheckboxes true to show checkboxes, false to hide them.
+     */
+    public void enableSelection(boolean showCheckboxes) {
+    	this.showCheckboxes = showCheckboxes;
+        for(int i=0;i<getComponentCount();++i) {
+            showCheckboxForMiddle((InteractiveComponentListMiddle)getComponent(i));
+        }
     }
 
     @Override
@@ -86,7 +98,14 @@ public class InteractiveComponentList extends JPanel {
             }
         });
 
+        showCheckboxForMiddle(panel);
+
         return panel;
+    }
+
+    private void showCheckboxForMiddle(InteractiveComponentListMiddle p) {
+        p.getCheck().setVisible(showCheckboxes);
+        if(!showCheckboxes) p.getCheck().setSelected(false);
     }
 
     public void updateLineIndicator(int mouseY) {
@@ -103,10 +122,6 @@ public class InteractiveComponentList extends JPanel {
         }
     }
 
-    /**
-     *
-     * @param lineY
-     */
     public void moveDroppableHere(int lineY) {
         int dropIndex = getDropIndex(new Point(0, lineY));
         // Adjust dropIndex if necessary
@@ -145,23 +160,6 @@ public class InteractiveComponentList extends JPanel {
                 e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, draggedIndex, dropIndex);
             }
             listener.contentsChanged(e);
-        }
-    }
-
-    /**
-     * If index0 is &gt; index1, index0 and index1 will be swapped such that index0 will always be &lt;= index1.
-     * @param index0 the first index
-     * @param index1 the second index
-     */
-    private void fireDeleteEvent(int index0,int index1) {
-        ListDataListener[] listeners = listenerList.getListeners(ListDataListener.class);
-        ListDataEvent e = null;
-        for (ListDataListener listener : listeners) {
-            if(e==null) {
-                // lazy init - if no listeners we don't waste time allocating ram.
-                e = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index0, index1);
-            }
-            listener.intervalRemoved(e);
         }
     }
 
@@ -207,9 +205,9 @@ public class InteractiveComponentList extends JPanel {
     /**
      * Components are contained in {@link InteractiveComponentListMiddle}, which has a checkbox.  Find all components associated with
      * a selected checkbox.
-     * @return all selected panels.
+     * @return all {@link Component}s in selected rows.
      */
-    public List<Component> getAllSelectedPanels() {
+    public List<Component> getSelectedComponents() {
         List<Component> selectedPanels = new ArrayList<>();
         for (Component c : getComponents()) {
             if (c instanceof InteractiveComponentListMiddle panel) {
@@ -228,5 +226,23 @@ public class InteractiveComponentList extends JPanel {
      */
     public Component getInnerComponent(int index) {
         return ((InteractiveComponentListMiddle) getComponent(index)).getInnerComponent();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame();
+            InteractiveComponentList panel = new InteractiveComponentList();
+
+            panel.add(new JButton("Item 1"));
+            panel.add(new JButton("Item 2"));
+            panel.add(new JButton("Item 3"));
+
+            frame.add(new JScrollPane(panel));
+            frame.setTitle("Drag-and-Drop Panels with Buttons");
+            frame.setSize(200, 160);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }
